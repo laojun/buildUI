@@ -1,0 +1,1307 @@
+<!DOCTYPE HTML>
+<html lang="EN">
+<head>
+<meta charset="utf-8">
+<meta name="page-view-size" content="1280*720">
+<title>快速构建UI2.0 @zhangxj v1.0</title>
+<link href="jquery-ui/jquery-ui.css" rel="stylesheet">
+<style>
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{margin: 0;padding: 0;border: 0;outline: 0;font-size: 100%;vertical-align: baseline;}
+/**CSS 开始**/
+/**CSS 结束**/
+#toolBar{ position:absolute; left:10px; top:730px; width:950px; height:auto; border:1px solid #000;}
+#toolBar { cursor:all-scroll;}
+#toolBar button{ margin-left:10px;}
+.div{position:absolute; background-color:#000; opacity:0.5; width:0px; height:0px;left:0px; top:0px;}
+.div_d{position:absolute; color:#FF0; text-shadow: #000 0 2px 0;}
+
+.item{ margin-left:10px; background:transparent;}
+.item input{ margin-right:5px;margin-bottom:2px;text-align:center;}
+.item select{ margin-left:5px;margin-right:10px;margin-bottom:2px;text-align:center;}
+
+.edit::-webkit-textfield-decoration-container{background-color: #f0f3f9;}
+.edit::-webkit-inner-spin-button{-webkit-appearance: none;}
+.edit::-webkit-outer-spin-button {-webkit-appearance: none;}
+
+input::-webkit-textfield-decoration-container{background-color: #f0f3f9;}
+input::-webkit-inner-spin-button{-webkit-appearance: none;}
+input::-webkit-outer-spin-button {-webkit-appearance: none;}
+
+
+.item .ipt_num{ width:50px;}
+.item .ipt_id{ width:80px;}
+.item .ipt_cls{ width:80px;}
+.item .ipt_parent{ width:80px;}
+.item .ipt_del{ width:30px;color:#C00;}
+.item .ipt_copy{ width:50px;color:#C00;}
+.item .ipt_component{ width:100px;}
+
+.odd{ background:#0080FF;}
+.even{ background:#FF8000;}
+.choosen{ background-color:#999;}
+.jsParm{ width:50px;}
+.initCompCheck{width:15px; height:15px;}
+
+.ruler{ position:absolute;}
+.ruler .rx{ position:absolute; background-color:#FF8000; height:2px; color:#0F0;text-shadow: #000 0 2px 0; text-align:center; line-height:100%;word-break:keep-all;white-space:nowrap; font-size:18px;}
+.ruler .ry{ position:absolute;background-color:#FF8000; width:2px; color:#0F0;text-shadow: #000 0 2px 0; text-align:center;word-break:keep-all;white-space:nowrap; font-size:18px;}
+
+#dialog-form label, #dialog-form input { display:inline-block; }
+#dialog-form input.text { margin-bottom:12px; width:50px; padding: .4em; }
+#dialog-form fieldset { padding:0; border:0; margin-top:25px; }
+#dialog-form h1 { font-size: 1.2em; margin: .6em 0; }
+div#users-contain { width: 350px; margin: 20px 0; }
+div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+.ui-dialog .ui-state-error { padding: .3em; }
+.validateTips { border: 1px solid transparent; padding: 0.3em; }
+
+
+.itemFoc{
+	animation-name:itemFoc;
+	animation-duration:1s;
+	-webkit-animation-name:itemFoc;
+	-webkit-animation-duration:1s;
+	/*-webkit-animation:div1 5s;  Safari and Chrome */
+}
+@keyframes itemFoc{
+	from{ background:#0F0;}
+	to { background:transparent;}
+}
+
+@-webkit-keyframes itemFoc{
+	from{ background:#0F0;}
+	to { background:transparent;}
+}
+#setArea { cursor:all-scroll;}
+
+</style>
+</head>
+<body onUnload="eixtPage();" leftmargin="0" topmargin="0">
+<div id="picDemo" style="position:absolute; width:1280px; height:720px; left:0px; top:0px; background-color:#C7EDCC; background-repeat:no-repeat;"></div>
+
+<div id="drawArea" style="position:absolute; width:1285px; height:725px; left:0px; top:0px;"></div>
+
+<div id="toolBar" class="ui-widget-content">
+	工具栏：
+    <input type="file" name="loadPic0" id="loadPic0" multiple style="display:none;" />
+    <button id="loadPic">传图</button>
+    <button id="reload">reload</button>
+    <button id="ruler">ruler(R)</button>
+    <button id="cancelRuler">cancelRuler(C)</button>
+	<button id="draw">draw(D)</button>
+	<button id="drawList">drawList(A)</button>
+    
+</div>
+
+
+<div id="setArea" class="ui-widget-content" style="position:absolute; width:800px; height:520px; left:1300px; top:10px; border:1px solid #000; text-align:center; font-size:22px;">
+元素列表<br>
+
+<ul style="text-align:left; font-size:20px;">
+<li class="item"><input class="ipt_id odd" value="id" readonly><input class="ipt_cls even" value="class" readonly><input class="ipt_parent odd" value="parent" readonly><input class="ipt_num even" value="width" readonly><input class="ipt_num odd" value="height" readonly><input class="ipt_num even" value="left" readonly><input class="ipt_num odd" value="top" readonly><input class="ipt_copy even" value="copy" readonly><input class="ipt_component odd" value="component" readonly><input class="ipt_del even" value="del" readonly></li>
+</ul>
+<div style="height: 440px; overflow:auto;">
+<ul id="setUl" style="text-align:left; font-size:20px;">
+    
+</ul>
+</div>
+
+<div>
+	<button id="getHtml">getHtml</button>
+    <button id="getJs">getJs</button>
+</div>
+</div>
+
+
+<div id="dialog-form" title="画列表_drawList">
+	<p class="validateTips">请根据页面布局填写各项参数</p>
+	<form>
+	<fieldset>
+    	<div>
+        <label for="hang">总行数：</label>
+        <input type="number" name="hang" id="hang" value="1" min="1" max="30" class="text ui-widget-content ui-corner-all" required />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="hang_jl">行间距:</label>
+        <input type="number" name="hang_jl" id="hang_jl"  value="1" class="text ui-widget-content ui-corner-all" required />
+        </div>
+        <div>
+        <label for="lie">总列数：</label>
+        <input type="number" name="lie" id="lie" value="1" min="1" max="30" class="text ui-widget-content ui-corner-all" required />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="lie_jl">列间距:</label>
+        <input type="number" name="lie_jl" id="lie_jl"  value="1" class="text ui-widget-content ui-corner-all" required />
+        </div>
+        <div>
+        <label for="curHang">所在行：</label>
+        <input type="number" name="curHang" id="curHang" value="1" min="1" max="30" class="text ui-widget-content ui-corner-all" required />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="curLie">所在列:</label>
+        <input type="number" name="curLie" id="curLie"  value="1" min="1" max="30" class="text ui-widget-content ui-corner-all" required />
+        </div>
+	</fieldset>
+	</form>
+</div>
+
+<div id="dialog-result" title="下载HTML">
+	<p>已经为您生成相关HTML代码，请自行拷贝使用</p>
+	<textarea id="htmlStr" style="width:100%; height:100%;"></textarea>
+</div>
+
+<div id="dialog-jsConfig" title="js组件配置">
+	<p class="validateTips">请根据页面区域组件填写各项参数</p>
+	<form id="jsConfigForm">
+    <!--<div style="height: 800px; widows:90%; overflow:auto; background:#9FF;">-->
+	<fieldset id="jsConfig">
+	</fieldset>
+    <input type="submit" value="Submit" hidden="hidden" id="jsConfigSubmit">
+	</form>
+</div>
+
+<div id="dialog-jsCode" title="下载Js">
+	<p>已经为您生成相关Js代码，请自行拷贝使用</p>
+    <br />
+    <p>请在页面引入以下js标签:</p>
+    <textarea id="jsRootStr" style="width:100%; height:50px;"></textarea>
+	<p>请在页面引入以下js代码</p>
+    <textarea id="jsCodeStr" style="width:100%; height:80%;"></textarea>
+</div>
+
+
+<div id="area" style="position: absolute; left: 36px; top: 766px; width: 100px; height: 300px; border: 1px;"></div>
+
+
+<script type="text/javascript" src="js/jquery-3.1.1.js"></script>
+<script type="text/javascript" src="js/components.js"></script>
+<script src="jquery-ui/jquery-ui.js"></script>
+<script>
+$(document).ready(function(){
+	
+/*document.onkeydown = function(evt){
+	var key_code = event.which ? event.which: event.keyCode;
+		switch (key_code) {
+			case 82://R
+				ToolBar.toDo("ruler");
+				break;
+			case 67://c
+				ToolBar.toDo("cancelRuler");
+				break;
+			case 68://d
+				ToolBar.toDo("draw");
+				break;
+			case 65://a
+				ToolBar.toDo("drawList");
+				break;
+		}
+}*/
+	
+$("#setArea").draggable();
+$("#toolBar").draggable();
+
+$("#setArea").draggable();
+$("#toolBar").draggable();
+
+$('#drawArea').mousedown(function(e){
+	draw.startDraw();
+});
+
+$('#drawArea').mouseup(function(e){
+	draw.endDraw();
+});
+
+$('#drawArea').mousemove(function(e){
+	draw.moveDraw();
+});
+
+$('#drawArea').mouseleave(function(e){
+	draw.cancel();
+});
+
+$("#loadPic0").change(function(){
+	var objUrl = getObjectURL(this.files[0]) ;
+	if(objUrl){
+		$("#picDemo").css("background-image", "url("+objUrl+")");
+	}
+}) ;
+//建立一個可存取到該file的url
+function getObjectURL(file) {
+	var url = null ; 
+	if (window.createObjectURL!=undefined) { // basic
+		url = window.createObjectURL(file) ;
+	} else if (window.URL!=undefined) { // mozilla(firefox)
+		url = window.URL.createObjectURL(file) ;
+	} else if (window.webkitURL!=undefined) { // webkit or chrome
+		url = window.webkitURL.createObjectURL(file) ;
+	}
+	return url ;
+}
+var compOptionStr = (function(){
+	var str = "<option value ='-1'>  </option>";
+	for(var i=0,l=components.length;i<l;i++){
+		str += "<option value ='"+i+"'>"+components[i].name+"</option>";
+	}
+	return str;
+})();
+
+
+
+var ToolBar = {
+	toolBarId:"toolBar",
+	curTool:"",
+	init:function(){
+		$("#toolBar").click(function(e){//工具栏事件处理
+			var evt = e || window.event;
+			var target = evt.target || evt.srcElement;
+			if(target.nodeName.toLocaleLowerCase() == 'button'){//按钮
+				ToolBar.toDo(target.id);
+			}
+		});
+	},
+	toDo:function(id){
+		switch(id){
+			case 'loadPic'://传图
+				$("#loadPic0").click();
+				break;
+			case 'reload'://重载页面
+				location.reload();
+				break;
+			case 'ruler'://丈量
+				if(this.curTool=="ruler"){//当前为丈量，撤销丈量
+					draw.setCursor("");
+					$("#"+id).removeClass("choosen");
+					this.curTool = "";
+				}else{//当前为其他，设置为丈量
+					draw.setCursor(id);
+					$("#"+id).addClass("choosen");
+					if(this.curTool)$("#"+this.curTool).removeClass("choosen");
+					this.curTool = id;
+				}
+				break;
+			case 'draw'://画
+				if(this.curTool=="draw"){//当前为画，撤销画
+					draw.setCursor("");
+					$("#"+id).removeClass("choosen");
+					this.curTool = "";
+				}else{//当前为其他，设置为画
+					draw.setCursor(id);
+					$("#"+id).addClass("choosen");
+					if(this.curTool)$("#"+this.curTool).removeClass("choosen");
+					this.curTool = id;
+				}
+				break;
+			case 'drawList'://画列表
+				if(this.curTool=="drawList"){//当前为画表，撤销画表
+					draw.setCursor("");
+					$("#"+id).removeClass("choosen");
+					this.curTool = "";
+				}else{//当前为其他，设置为画表
+					draw.setCursor(id);
+					$("#"+id).addClass("choosen");
+					if(this.curTool)$("#"+this.curTool).removeClass("choosen");
+					this.curTool = id;
+				}
+				break;
+			case 'cancelRuler'://撤销上一步尺子
+				//draw.cancelRulerItem();
+				draw.delRuler();
+				break;
+		}
+	}
+};
+ToolBar.init();
+
+$(document).on("input propertychange", ".edit", function (e) {
+	itemUlObj.editItem(e);
+});
+$(document).on("input click", ".del", function (e) {
+	itemUlObj.editItem(e);
+});
+
+$(document).on("input click", ".copy", function (e) {
+	itemUlObj.copyItem(e);
+});
+
+$(document).on("select change", ".component", function(e){
+	itemUlObj.editItem(e);
+});
+
+$(document).on("li mouseenter", ".itemLi", function(e){
+	//console.log("on");
+	itemUlObj.onItem(e,"on");
+});
+
+
+
+$('#getHtml').click(function(e){
+	itemUlObj.create("html");
+});
+$('#getJs').click(function(e){
+	itemUlObj.create("js");
+});
+
+
+function _draw(){}
+var draw = {
+	board:"drawArea",//画布id
+	drawFlag:false,//是否在画
+	act:"",//画布动作状态
+	wId:"w",//临时div
+	idx:0,//div个数
+	startX:0, startY:0,//开始坐标轴
+	retcLeft:"0px", retcTop:"0px", retcHeight:"0px", retcWidth:"0px",//画出来的div
+	drawArr:[],//画的对应div数据
+	drawEle:"",//画的html元素
+	drawCls:"",//画的元素的css
+	itemId:"item",//生成的元素的id
+	itemIdx:0,//生成元素个数
+	sTime:0,//开始时间
+	eTime:0,//结束时间
+	rulerIdx:0,//测量个数
+	rulerId:"m",//测量id
+	rulerDeep:2,//测量的div高度
+	rulerSideAdd:2,//边上多出的部分
+	listModeRect:null,//画列表时的保留模板
+	
+	//开始画
+	startDraw:function(_ele,_cls){
+		if(!(this.act=="draw" || this.act=="ruler" || this.act=="drawList"))return;
+		if(this.drawFlag==true)return;
+		this.listModeRect = null;
+		var ele = "div";
+		var cls = "div";
+		this.drawEle = _ele || "div";
+		this.drawCls = _cls || this.drawEle+"_d";
+		this.drawFlag = true;
+		
+		this.retcLeft=0;this.retcTop=0;this.retcHeight=0;this.retcWidth=0;
+		//try{
+			var evt = window.event;
+			var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+			var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+			this.startX = evt.clientX + scrollLeft;
+			this.startY = evt.clientY + scrollTop;
+			this.idx++;
+			var div = document.createElement(ele);
+			div.id = this.wId + this.idx;
+			div.className = cls;
+			div.style.left = this.startX + "px";
+			div.style.leTop = this.startY + "px";
+			this.$(this.board).appendChild(div);
+			this.sTime = (new Date()).getTime();
+		//}catch(e){
+			//alert(e);
+		//}
+	},
+	//移动画
+	moveDraw:function(){
+		if(!(this.act=="draw" || this.act=="ruler" || this.act=="drawList"))return;
+		if(this.drawFlag){
+			//try{
+				var evt = window.event;
+				var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+				var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+	this.retcLeft=(this.startX-evt.clientX-scrollLeft>0 ? evt.clientX+scrollLeft : this.startX)+"px";
+	this.retcTop=(this.startY-evt.clientY-scrollTop>0 ? evt.clientY+scrollTop : this.startY)+"px";
+				this.retcHeight = Math.abs(this.startY - evt.clientY - scrollTop) + "px";
+				this.retcWidth = Math.abs(this.startX - evt.clientX - scrollLeft) + "px";
+				this.$(this.wId + this.idx).style.left = this.retcLeft;
+				this.$(this.wId + this.idx).style.top = this.retcTop;
+				this.$(this.wId + this.idx).style.width = this.retcWidth;
+				this.$(this.wId + this.idx).style.height = this.retcHeight;
+			//}catch(e){
+				//alert(e);
+			//} 
+		}
+	},
+	//结束画
+	endDraw:function(){
+		if(!(this.act=="draw" || this.act=="ruler" || this.act=="drawList"))return;
+		if(this.drawFlag==false)return;
+		//try{
+			var evt = window.event;
+			this.$(this.board).removeChild(this.$(this.wId + this.idx));
+			this.eTime = (new Date()).getTime();
+			//if(this.eTime-this.sTime<100){this.idx--;return;}//100ms内操作不算
+			var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+			var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+			var endX = evt.clientX + scrollLeft;
+			var endY = evt.clientY + scrollTop;
+			this.drawFlag = false;
+			
+			if(this.startX==endX && this.startY==endY){//在同一点上，鼠标双击，不成形状
+				this.idx--;
+				return;
+			}
+			if(this.act=="ruler"){//添加尺子
+				this.addRuler();
+				return;
+			}
+			
+			if(this.startX==endX || this.startY==endY){//画：没形状，操作无效
+				this.idx--;
+				return;
+			}
+			if(this.act=="draw" || this.act=="drawList")this.addItem();//添加div
+		//}catch(e){
+			//alert(e);
+		//}
+		
+	},
+	//添加尺子
+	addRuler:function(){
+		this.rulerIdx++ ;
+		var ele = document.createElement("div");
+		ele.className = "ruler";
+		ele.style.left = this.retcLeft;
+		ele.style.top = this.retcTop;
+		ele.style.width = this.retcWidth;
+		ele.style.height = this.retcHeight;
+		ele.id = this.rulerIdx+this.rulerId;
+		//显示坐标
+		var _h1 = "";
+		var _h2 = "";
+		var w = parseInt(this.retcWidth,10);
+		var h = parseInt(this.retcHeight,10);
+		
+		if(w>2){
+			_h1 = "<div class='rx' style='width:"+this.retcWidth+"'>X:"+w+"</div>"
+		}
+		if(h>2){
+			_h2 = "<div class='ry' style='height:"+this.retcHeight+";line-height:"+this.retcHeight+"'>Y:"+h+"</div>";
+		}
+		
+		ele.innerHTML = _h1 + _h2;
+		//ele.style.backgroundColor = rgb();
+		
+		this.$(this.board).appendChild(ele);
+	},
+	//删除尺子
+	delRuler:function(){
+		if(this.rulerIdx==0)return;
+		if(this.$(this.rulerIdx+this.rulerId)){
+			this.$(this.board).removeChild(this.$(this.rulerIdx+this.rulerId));
+			this.rulerIdx--;
+		}	
+	},
+	cancel:function(){
+		if(this.drawFlag==false)return;
+		this.$(this.board).removeChild(this.$(this.wId + this.idx));
+		this.drawFlag = false;
+	},
+	
+	//添加元素
+	addItem:function(){
+		this.listModeRect = null;
+		this.itemIdx++;
+		var color = rgb(0.5);
+		var p = {
+			tag:this.drawEle,
+			tagCls:this.drawCls,
+			left:this.retcLeft,
+			top:this.retcTop,
+			width:this.retcWidth,
+			height:this.retcHeight,
+			id:this.itemIdx+this.itemId,
+			class:"",//初始画，class为空
+			color:color,
+			parent:"",//初始画，parent为空
+			drawIdStr:this.itemId,
+			component:-1//初始画，不设置组件
+		};
+		var mode = {tag:p.tag,tagCls:p.tagCls,left:p.left,top:p.top,width:p.width,height:p.height,color:color,drawIdStr:this.itemId,parent:p.parent,class:p.class,component:p.component};//模型
+		
+		this.addUnit(p);
+		
+		this.drawEle = "";
+		this.drawCls = "";
+		
+		
+		if(this.act=="drawList"){
+			$( "#dialog-form" ).dialog( "open" );
+			this.setModeRect(mode);
+		}
+	},
+	//设置被拷贝的模型属性
+	setModeRect:function(p){
+		var mode = {tag:p.tag,tagCls:p.tagCls,left:p.left,top:p.top,width:p.width,height:p.height,color:p.color,drawIdStr:p.drawIdStr,parent:p.parent,class:p.class,component:-1};//模型
+		this.listModeRect = mode;
+	},
+	//添加列表
+	addList:function(_p){
+		var p = {
+				hangNum : parseInt(_p.hangNum,10),//行数
+      			hangJl : parseInt(_p.hangJl,10),//行间距
+				lieNum : parseInt(_p.lieNum,10),//列数
+      			lieJl : parseInt(_p.lieJl,10),//列间距
+				curHang : parseInt(_p.curHang,10),//当前所在行
+      			curLie : parseInt(_p.curLie,10)//当前所在列
+			};
+		var cW = parseInt(this.listModeRect.width,10);
+		var cH = parseInt(this.listModeRect.height,10);
+		var cL = parseInt(this.listModeRect.left,10);
+		var cT = parseInt(this.listModeRect.top,10);
+		var cC = this.listModeRect.color;
+		var cTag = this.listModeRect.tag;
+		var cCss = this.listModeRect.tagCls;
+		var drawIdStr = this.listModeRect.drawIdStr;
+		var cParent = this.listModeRect.parent;
+		var cClass = this.listModeRect.class;
+		var cComponent = -1;
+		
+		var l_Jl = cW+p.lieJl;//行与行的间距
+		var h_Jl = cH+p.hangJl;//列与列的间距
+		
+		var startLeft = cL - (p.curLie - 1)*l_Jl;//列表开始的left值
+		var startTop = cT - (p.curHang -1)*h_Jl;//列表开始的top值
+		
+		
+		for(var i=1;i<=p.hangNum;i++){
+			for(var j=1;j<=p.lieNum;j++){
+				if(i==p.curHang && j==p.curLie){//当前位置，不重复设置	
+				}else{
+					this.itemIdx++;
+					var obj = {
+						tag:cTag,
+						tagCls:cCss,
+						left:(startLeft+(j-1)*l_Jl)+"px",
+						top:(startTop+(i-1)*h_Jl)+"px",
+						width:cW+"px",
+						height:cH+"px",
+						id:this.itemIdx+drawIdStr,
+						color:cC,
+						parent:cParent,
+						class:cClass,
+						drawIdStr:drawIdStr,
+						component:cComponent
+					};
+					this.addUnit(obj);
+				}
+			}
+		}
+		this.listModeRect = null;
+	},
+	
+	addUnit:function(_p){
+		//this.itemIdx++;
+		var ele = document.createElement(_p.tag);
+		ele.className = _p.tagCls;
+		ele.style.left = _p.left;
+		ele.style.top = _p.top;
+		ele.style.width = _p.width;
+		ele.style.height = _p.height;
+		ele.id = _p.id;
+		ele.innerHTML = "#"+_p.id;
+		ele.style.backgroundColor = _p.color;
+		this.$(this.board).appendChild(ele);
+		var p = {
+			id:ele.id,
+			left:parseInt(_p.left,10),
+			top:parseInt(_p.top,10),
+			width:parseInt(_p.width,10),
+			height:parseInt(_p.height,10),
+			srcId:_p.id,
+			color:_p.color,
+			tag:_p.tag,
+			tagCls:_p.tagCls,
+			parent:_p.parent,
+			class:_p.class,
+			component:_p.component,
+			drawIdStr:_p.drawIdStr
+		}
+		itemUlObj.addLi(p);
+	},
+	
+	//设置鼠标
+	setCursor:function(str){
+		switch(str){
+			case "":
+				this.act = "";
+				$("#"+this.board).css("cursor","default");
+				break;
+			case "ruler":
+				this.act = "ruler";
+				$("#"+this.board).css("cursor","crosshair");
+				//$("#"+this.board).css("cursor","col-resize");
+				break;
+			case "draw":
+				this.act = "draw";
+				$("#"+this.board).css("cursor","crosshair");
+				break;
+			case "drawList":
+				this.act = "drawList";
+				//$("#"+this.board).css("cursor","nw-resize");
+				$("#"+this.board).css("cursor","crosshair");
+				break;
+			default:
+				this.act = "";
+				$("#"+this.board).css("cursor","default");
+		}
+	},
+	
+	//恢复上一次操作
+	cancelRulerItem:function(){
+		if(this.itemIdx==0)return;
+		if(this.$(this.itemIdx+this.itemId)){
+			this.$(this.board).removeChild(this.$(this.itemIdx+this.itemId));
+			itemUlObj.delUlItem();
+			this.itemIdx--;
+		}		
+	},
+	//修改Div样式
+	editItemStyle:function(_id,_attr,_val){
+		if(_attr=="del"){
+			this.$(this.board).removeChild(this.$(_id));
+			return;
+		}
+		if(_attr=="id"){
+			this.$(_id).innerHTML = "#"+_val;
+		}else if(_attr=="class"){
+			//this.$(_id).className = _val;
+		}else{
+			this.$(_id).style[_attr] = _val+"px";
+		}
+	},
+	$:function(id){return document.getElementById(id);}
+}
+
+function _itemUlObj(){}
+var itemUlObj = {
+	itemArr:[],//元素对应数据
+	ulId:"setUl",//ul的ID
+	addLi:function(p){
+		var item = {
+			id:p.id,
+			left:p.left,
+			top:p.top,
+			width:p.width,
+			height:p.height,
+			srcId:p.srcId,
+			tag:p.tag,
+			color:p.color,
+			class:p.class,
+			parent:p.parent,
+			tagCls:p.tagCls,
+			component:p.component,
+			drawIdStr:p.drawIdStr
+		}
+		this.itemArr.push(item);
+		this.addUlItem(item);
+	},
+	
+	addUlItem:function(it){
+		var li = document.createElement("li");
+		li.id = "i_"+it.id;
+		li.alt = it.srcId;
+		li.className = "item itemLi";
+		
+	var _h = "<input id='"+it.id+"_id' class='edit ipt_id' alt='id,"+it.srcId+"' value='"+it.id+"' />"+//生成div的id值
+	"<input id='"+it.id+"_class' alt='class,"+it.srcId+"' class='edit ipt_cls' value='"+it.class+"' />"+//class
+		"<input id='"+it.id+"_parent' alt='parent,"+it.srcId+"' class='edit ipt_parent' value='"+it.parent+"' />"+//class
+		"<input id='"+it.id+"_width' class='edit ipt_num' alt='width,"+it.srcId+"' type='number' value='"+it.width+"' />"+//宽
+	"<input id='"+it.id+"_height' class='edit ipt_num' alt='height,"+it.srcId+"' type='number' value='"+it.height+"' />"+//高
+		"<input id='"+it.id+"_left' class='edit ipt_num' alt='left,"+it.srcId+"' type='number' value='"+it.left+"' />"+//left
+		"<input id='"+it.id+"_top' class='edit ipt_num' alt='top,"+it.srcId+"' type='number' value='"+it.top+"' />"+//top
+		"<input id='"+it.id+"_copy' class='copy ipt_copy' alt='copy,"+it.srcId+"' type='button' value='copy' />"+//复制
+		"<select id='"+it.id+"_component' class='component ipt_component' title='component,"+it.srcId+"'>"+compOptionStr+"</select>"+//复制
+		/*if(it.foc==true){
+			_h += "<input id='"+it.id+"_foc' class='focus ipt_foc' alt='foc,"+it.srcId+"' type='checkbox' checked />"
+		}else{
+			_h += "<input id='"+it.id+"_foc' class='focus ipt_foc' alt='foc,"+it.srcId+"' type='checkbox' />"
+		}*/
+		"<input id='"+it.id+"_del' class='del ipt_del' alt='del,"+it.srcId+"' type='button' value='X' />";//删除
+		li.innerHTML = _h;
+		this.$(this.ulId).appendChild(li);
+	},
+	delUlItem:function(_srcId,_parentId){
+		if(this.itemArr.length==0)return;
+		if(_srcId===undefined){
+			var o = this.itemArr.pop();
+			this.$(this.ulId).removeChild(this.$("i_"+o.srcId));
+			return;	
+		}
+		var _i = 0;
+		for(var i=0,len=this.itemArr.length;i<len;i++){
+			if(this.itemArr[i].srcId==_srcId){
+				_i = i;
+				break;
+			}
+		}
+		this.$(this.ulId).removeChild(this.$(_parentId));
+		this.itemArr.remove(_i);
+	},
+	onItem:function(e,s){
+		var srcId = e.currentTarget.alt;//alt属性
+		if(srcId && s=="on"){
+			$("#"+srcId).addClass("itemFoc");
+			setTimeout(function(){
+				$("#"+srcId).removeClass("itemFoc");
+			},500);
+		}
+	},
+	//修改元素
+	editItem:function(e){
+		var val = e.currentTarget.value;//修改的值
+		var alt = e.currentTarget.alt;//alt属性
+		var title = e.currentTarget.title;//title属性
+		var srcId = "";
+		var attrs = "";
+		
+		if(alt){
+			srcId = alt.split(",")[1];//修改的画布上的div的id
+			attrs = alt.split(",")[0];//修改的属性
+		}else if(title){
+			srcId = title.split(",")[1];//修改的画布上的div的id
+			attrs = title.split(",")[0];//修改的属性
+		}
+		var id = e.currentTarget.id;//inputid属性
+		
+		//var idx = (parseInt(srcId,10) - 1);//元素坐标
+		
+		
+		if(attrs=="del"){//删除元素
+			var parentId = e.target.parentElement.id;
+			this.delUlItem(srcId,parentId);//删除元素位置
+			draw.editItemStyle(srcId,attrs,val);
+			return;
+		}
+		console.log(val,attrs,srcId)
+		//console.log(this.itemArr[idx]);
+		var _i = 0;
+		for(var i=0,len=this.itemArr.length;i<len;i++){
+			if(this.itemArr[i].srcId==srcId){
+				_i = i;
+				break;
+			}
+		}
+		if(attrs=="component"){//选择为设置组件
+			//var component = $('#'+id+' option:selected').val();
+			//var component = $("#"+id+"[type='checkbox']").is(':checked');
+			this.itemArr[_i][attrs] = val;
+			return;
+		}
+		
+		if(this.itemArr[_i][attrs]==val)return;//值一样，不变
+		this.itemArr[_i][attrs] = val;
+		if(attrs=="parent" || attrs=="component" || attrs=="class")return;//当前设置父元素，或焦点，或class
+		//console.log(this.itemArr[idx]);
+		draw.editItemStyle(srcId,attrs,val);//修改UI
+	},
+	
+	copyItem:function(e){//复制
+		var alt = e.currentTarget.alt;//alt属性
+		var srcId = alt.split(",")[1];//目标的画布上的div的id
+		//var idx = (parseInt(srcId,10) - 1);//元素坐标
+		//var parentId = e.target.parentElement.id;
+		var _i = 0;
+		for(var i=0,len=this.itemArr.length;i<len;i++){
+			if(this.itemArr[i].srcId==srcId){
+				_i = i;
+				break;
+			}
+		}
+		var obj = this.itemArr[_i];
+		//var mode = {tag:obj.tag,tagCls:obj.tagCls,left:obj.left,top:obj.top,width:obj.width,height:obj.height,color:obj.color,drawIdStr:obj.drawIdStr};//模型
+		draw.setModeRect(obj);
+		$( "#dialog-form" ).dialog( "open" );
+	},
+	create:function(_type){
+		console.log(this.itemArr);
+		//检测parentid是否存在
+		
+		/*var item = {
+			id:p.id,
+			left:p.left,
+			top:p.top,
+			width:p.width,
+			height:p.height,
+			srcId:p.srcId,
+			tag:p.tag,
+			color:p.color,
+			class:p.class,
+			parent:p.parent,
+			tagCls:p.tagCls,
+			component:p.component,
+			drawIdStr:p.drawIdStr
+		}*/
+		
+		if(this.itemArr.length<1)return;
+		var ids = "";
+		for(var i=0,len=this.itemArr.length;i<len;i++){
+			if(this.itemArr[i].id != ""){
+				ids += "|"+this.itemArr[i].id+"|";
+			}
+		}
+		
+		for(var j=0,len=this.itemArr.length;j<len;j++){
+			if(this.itemArr[j].parent != ""){
+				if(this.itemArr[j].parent == this.itemArr[j].id){
+					alert("元素"+this.itemArr[j].id+"不可以自身为父元素");
+					return;
+					break;
+				}
+				if(ids.indexOf("|"+this.itemArr[j].parent+"|") < 0){//不存在
+					alert("不存在"+this.itemArr[j].parent+"元素作为父元素");
+					return;
+					break;
+				}
+			}
+		}
+		CreateCode.create(this.itemArr,_type);
+	},
+	
+	$:function(id){return document.getElementById(id);}
+}
+
+
+function _CreateCode(){};
+var CreateCode = {
+	itemArr:[],
+	recreateArr:[],//重构后的数据
+	groupObj:{},//dom树的结构映射
+	blankStr:"dombody",//无父id的div临时标识，表示最外层级
+	compList:[],//重构后组件相关参数
+	lev:0,//层级
+	create:function(_arr,_type){
+		this.compList = [];
+		this.groupObj = {};
+		this.itemArr = [];
+		this.recreateArr = [];
+		this.itemArr = _arr.slice(0);
+		this.group();
+		if(_type=="js"){
+			this.createJs();
+		}else{
+			this.createHTML();
+		}
+		//return recreateArr;
+	},
+	group:function(){
+		this.groupObj[this.blankStr] = [];
+		for(var i=0,len=this.itemArr.length;i<len;i++){
+			if(this.itemArr[i].parent==""){
+				this.groupObj[this.blankStr].push(this.itemArr[i]);
+			}else{
+				if(this.groupObj[this.itemArr[i].parent]){
+					this.groupObj[this.itemArr[i].parent].push(this.itemArr[i]);
+				}else{
+					this.groupObj[this.itemArr[i].parent] = [];
+					this.groupObj[this.itemArr[i].parent].push(this.itemArr[i]);
+				}
+			}			
+		}
+	},
+	createHTML:function(){
+		this.htmlStr = "";
+		console.log("createHTML");
+		
+		var _html = this.getCreateHTML(this.groupObj[this.blankStr]);
+		this.htmlStr = _html;
+		$( "#dialog-result" ).dialog( "open" );
+	},
+	getCreateHTML:function(p,sites,lev){
+		
+		/*var item = {
+			id:p.id,
+			left:p.left,
+			top:p.top,
+			width:p.width,
+			height:p.height,
+			srcId:p.srcId,
+			tag:p.tag,
+			color:p.color,
+			class:p.class,
+			parent:p.parent,
+			tagCls:p.tagCls,
+			component:p.component,
+			drawIdStr:p.drawIdStr
+		}*/
+		
+		if(!p){return ''}
+		sites = sites || [0,0];
+		lev = lev || 0;//层级
+		var tabStr = "\t".repeat(lev);//缩进符
+		var p_left = sites[0];//父元素的left
+		var p_top = sites[1];//父元素的top
+		
+        var html='';
+		
+        for(var i=0;i<p.length;i++){
+			var uo = p[i];
+			var left = p[i].left - p_left;
+			var top = p[i].top - p_top;
+			html += "\n"+tabStr+"<div ";
+			if(uo.id){
+				html += 'id="'+uo.id+'" ';
+			}
+			if(uo.class){
+				html += 'class="'+uo.class+'" ';
+			}
+			html+='style="width:'+uo.width+'px; height:'+uo.height+'px; left:'+left+'px; top:'+top+'px; background:'+uo.color+'">';
+            //html+='\n<div id="'+uo.id+'" class="'+uo.class+'" style="width:'+uo.width+'px; height:'+uo.height+'px; left:'+left+'px; top:'+top+'px; background:'+uo.color+'">';
+            html+=this.getCreateHTML(this.groupObj[p[i].id],[p[i].left,p[i].top],lev+1);
+            html+="\n"+tabStr+"</div>";
+        };
+	
+        return html;
+	},
+	createJs:function(_obj){
+		//$( "#dialog-jsConfig" ).dialog("open");
+		var compList = this.createComp(this.itemArr);//获取获焦区域的整合处理
+		if(compList.length==0){
+			alert("当前无选择组件");
+			return;
+		}
+		this.compList = compList;
+		$( "#dialog-jsConfig" ).dialog("open");
+	},
+	createComp:function(_arr){
+		var arr = _arr || [];
+		var compList = [];
+		for(var i=0,l=arr.length;i<l;i++){
+			if(arr[i].component>=0){
+				if(!arr[i].id){
+					alert("组件容器ID不能为空");
+					return;
+					break;
+				}
+				compList.push(arr[i]);
+			}
+		}
+		return compList;
+	}
+}
+
+
+
+//设置随机颜色
+function rgb(_o){
+		//rgb(255,0,0)获焦样式
+	var r=Math.floor(Math.random()*255);
+	var g=Math.floor(Math.random()*255);
+	var b=Math.floor(Math.random()*255);
+	var rgb='rgb('+r+','+g+','+b+')';
+	if(_o)rgb = 'rgba('+r+','+g+','+b+','+_o+')'
+	return rgb;
+}
+var $id = function(id){
+	return document.getElementById(id);
+}
+
+function _dialog_form(){}
+$("#dialog-form").dialog({
+	autoOpen: false,
+	height: 600,
+	width: 800,
+	modal: true,
+	buttons: {
+	"drawList":function() {
+		var bValid = true;
+		var hang = $("#hang"),//行数
+			hangJl = $("#hang_jl"),//行间距
+			lie = $("#lie"),//列数
+			lieJl = $("#lie_jl"),//列间距
+			curHang = $("#curHang"),//当前所在行
+			curLie = $("#curLie");//当前所在列
+			
+		allFields = $([]).add(hang).add(lie).add(curHang).add(curLie);
+		allFields.removeClass( "ui-state-error" );
+		
+		bValid = bValid && checkNum(hang,"行数",1,30);
+		bValid = bValid && checkNum(lie,"列数",1,30);
+		bValid = bValid && checkNum(curHang,"当前所在行数",1,hang.val(),"总行数");
+		bValid = bValid && checkNum(curLie,"当前所在列数",1,lie.val(),"总列数");
+		
+		if(bValid){//值验证通过
+			var parm = {
+				hangNum : hang.val(),//行数
+				hangJl : hangJl.val(),//行间距
+				lieNum : lie.val(),//列数
+				lieJl : lieJl.val(),//列间距
+				curHang : curHang.val(),//前增加
+				curLie : curLie.val()//后增加
+			};
+			draw.addList(parm);
+			$( this ).dialog( "close" );
+		}
+	},
+	Cancel: function() {
+	  $( this ).dialog( "close" );
+	}
+	},
+	close: function() {
+		var hang = $("#hang"),//行数
+			lie = $("#lie"),//列数
+			curHang = $("#curHang"),//前增加
+			curLie = $("#curLie");//后增加
+			
+		allFields = $([]).add(hang).add(lie).add(curHang).add(curLie);
+		allFields.removeClass( "ui-state-error" );
+		allFields.val( "" ).removeClass( "ui-state-error" );
+	},
+	open:function(){
+		var hang = $("#hang"),//行数
+			hangJl = $("#hang_jl"),//行间距
+			lie = $("#lie"),//列数
+			lieJl = $("#lie_jl"),//列间距
+			curHang = $("#curHang"),//前增加
+			curLie = $("#curLie");//后增加
+		hang.val(1);
+		hangJl.val(1);
+		lie.val(1);
+		lieJl.val(1);
+		curHang.val(1);
+		curLie.val(1);
+		var tips = $( ".validateTips" );
+		tips.text("请根据页面布局填写各项参数");
+	}
+});
+function _dialog_result(){}
+$("#dialog-result").dialog({
+	autoOpen: false,
+	height: 600,
+	width: 1000,
+	modal: true,
+	buttons: {
+	Cancel: function() {
+	  $( this ).dialog( "close" );
+	}
+	},
+	open:function(){
+		var res = $("#htmlStr");
+		res.text(CreateCode.htmlStr);
+	},
+	close: function() {
+		var res = $("#htmlStr");
+		
+		res.text("");
+	}
+});
+function _dialog_jsCode(){}
+$("#dialog-jsCode").dialog({
+	autoOpen: false,
+	height: 800,
+	width: 1000,
+	modal: true,
+	buttons: {
+	Cancel: function() {
+	  $( this ).dialog( "close" );
+	}
+	},
+	open:function(){
+		$("#jsRootStr").text(compParmConfig.jsRootStr);
+		$("#jsCodeStr").text(compParmConfig.jsCodeStr);
+		
+	},
+	close: function() {
+		$("#jsRootStr").text("");
+		$("#jsCodeStr").text("");
+	}
+});
+
+function _compParmConfig(){}
+var compParmConfig = {
+	compList:[],
+	compInitComp:null,
+	jsRootStr:"",
+	jsCodeStr:"",
+	getAllValue:function(){
+		for(var i=0,l=this.compList.length;i<l;i++){
+			var obj = this.compList[i];
+			obj.getFoc = $("#"+obj.containerId+"_parm_initComp[type='checkbox']").is(':checked');
+			for(var j=0,l2=obj.parms.length;j<l2;j++){
+				var p = obj.parms[j];
+				this.compList[i].parms[j].val = $("#"+p.id).val();
+			}
+		}
+	},
+	createJsCode:function(){
+		this.jsRootStr = "";
+		this.jsCodeStr = "";
+		var rootStr = "";//路径代码
+		var reqJsStr = "";//依赖js的路径
+		var jsCode = "";//js代码
+		var parmsStr = "";
+		var newStr = "";
+		var initCompStr = "";
+		var initStr = "";
+		var areasStr = ["","","",""];//
+		var areaInfoStr = "";
+	
+		for(var i=0,l=this.compList.length;i<l;i++){
+			var obj = this.compList[i];
+			var comp = components[parseInt(obj.compIdx,10)];
+			var initFun = comp.initFun || "initArea";
+			var inArea = comp.inArea || "enterArea";
+			var setArea = comp.setArea || "setArea";
+			if(!(initStr) && obj.getFoc){
+				initStr = "\nfunction init(){"+
+						"\n\t"+obj.containerId+"."+inArea+"();" +
+						"\n}"+
+						"\nwindow.onload=init;"
+			}
+			
+			if(rootStr.indexOf(comp.compUrl) > -1){//已存在路径，则不存
+			}else{
+				rootStr += "<script "+
+				 "type='text\/javascript' "+
+				 "src='"+comp.compUrl+"'></"+
+				 "script>\n";
+			}
+			if(!reqJsStr && comp.reqJsUrl){
+				reqJsStr = "<script "+
+							"type='text\/javascript' "+
+							"src='"+comp.reqJsUrl+"'></"+
+							"script>\n";
+			}
+			
+			
+		newStr += "\nvar "+obj.containerId+" = new "+comp.compName+"("+obj.containerId+"Parm);"
+			initCompStr += "\n"+obj.containerId+"."+initFun+"();";
+			parmsStr += "\nvar "+obj.containerId+"Parm = {"
+			for(var j=0,l2=obj.parms.length;j<l2;j++){
+				
+				var p = obj.parms[j];
+				var val = p.val;
+				if(p.name=="upArea"){
+					areasStr[0] = p.val;
+				}else if(p.name=="downArea"){
+					areasStr[1] = p.val;
+				}else if(p.name=="leftArea"){
+					areasStr[2] = p.val;
+				}else if(p.name=="rightArea"){
+					areasStr[3] = p.val;
+				}else{
+					if(val!=""){
+						if(val.indexOf("[")>-1){
+							parmsStr += "\n\t"+p.name+":"+p.val+","
+						}else{
+							parmsStr += "\n\t"+p.name+":'"+p.val+"',"
+						}
+					}
+				}				
+			}
+			parmsStr += "\n}";
+			if(!(areasStr[0]==""&&areasStr[1]==""&&areasStr[2]==""&&areasStr[3]=="")){
+			areaInfoStr += "\n"+obj.containerId+".setArea(["+areasStr[0]+","+areasStr[1]+","+areasStr[2]+","+areasStr[3]+"]);"
+			}
+		}
+		
+		this.jsRootStr = reqJsStr+rootStr;
+		this.jsCodeStr = parmsStr + newStr + initCompStr + areaInfoStr + initStr;		
+	}
+}
+
+//提交
+function _jsConfigForm(){}
+$("#jsConfigForm").submit(function(e){
+	try{
+		compParmConfig.getAllValue();
+		compParmConfig.createJsCode();
+		$("#dialog-jsCode").dialog("open");
+		return false;
+	}catch(e){
+		return false;
+	}	
+});
+
+function _dialog_jsConfig(){}
+$("#dialog-jsConfig").dialog({
+	autoOpen: false,
+	height: 600,
+	width: 1000,
+	modal: true,
+	buttons: {
+		"submit":function(){
+			$("#jsConfigSubmit").click();
+			//$( this ).dialog( "close" );
+		},
+		Cancel: function() {
+		  $( this ).dialog( "close" );
+		}
+	},
+	close: function() {
+		$("#jsConfig").html('');
+	},
+	open:function(){
+		$("#jsConfig").html('');
+		compParmConfig.compList = [];
+		var compList = CreateCode.compList;
+		var str = "";
+		for(var i=0,l=compList.length;i<l;i++){
+			str += "<div style='background:#FF9; margin:2px; padding:5px;'>";
+			str += "<div style='font-weight:bold; margin:5px;'>组件容器ID："+compList[i].id+" <==> 组件："+components[compList[i].component].name+"【"+components[compList[i].component].compName+"】</div>";
+			str += getCompParmStr(components[compList[i].component].parm,compList[i].id,compList[i].component);
+			str += "</div>";
+		}
+		$("#jsConfig").html(str);
+	}
+});
+
+function getCompParmStr(_p,_id,_cpIdx){
+	if(!_p)return;
+	var p = _p;
+	var id = _id;
+	var html = "";
+	var compData = {containerId:_id,compIdx:_cpIdx,parms:[],getFoc:false}
+	html += "<label for='"+id+"_parm_initComp'>初始获焦:</label>"+
+				"<input name='"+id+"_parm_initComp' id='"+id+"_parm_initComp' type='checkbox' class='initCompCheck'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	for(var key in p){
+		var _n = id+"_parm_"+key;
+		html += "<label for='"+_n+"'>"+p[key].name+"</label>"+
+				"<input name='"+_n+"' id='"+_n+"' type='text' class='jsParm'";
+				
+		if(p[key].require){
+			html += "required='required'";
+		}	
+		html += "/>";
+		if(p[key].require){
+			html += "<span style='color:red'>*</span>";
+		}
+		html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		compData.parms.push({id:_n,require:p[key].require,name:key});
+	}
+	compParmConfig.compList.push(compData);
+	return html;
+}
+
+
+
+
+function checkNum(o,txt,min,max,txt2){
+	if(parseInt(o.val())> parseInt(max) || parseInt(o.val()) < parseInt(min)){
+		 o.addClass( "ui-state-error" );
+		 var t = txt2 ? "("+txt2+")" : "";
+        updateTips( "" + txt + " 的值必须在 " +
+          min + " 和 " + max + t +" 之间。" );
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function updateTips( t ) {
+	var tips = $( ".validateTips" );
+	tips.text( t ).addClass( "ui-state-highlight" );
+	setTimeout(function() {
+		tips.removeClass( "ui-state-highlight", 1500 );
+	},500);
+}
+
+Array.prototype.remove=function(obj){ 
+	for(var i =0;i <this.length;i++){ 
+	
+		var temp = this[i]; 
+		if(!isNaN(obj)){ 
+			temp=i; 
+		} 
+		if(temp == obj){ 
+			for(var j = i;j <this.length;j++){ 
+				this[j]=this[j+1]; 
+			} 
+			this.length = this.length-1; 
+		} 
+	}
+}
+
+
+});
+</script>
+</body>
+</html>
